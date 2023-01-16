@@ -1,13 +1,23 @@
-## Micronaut 3.7.5 Documentation
+## Example to reproduce issues with image manipulation with Micronaut and native image
 
-- [User Guide](https://docs.micronaut.io/3.7.5/guide/index.html)
-- [API Reference](https://docs.micronaut.io/3.7.5/api/index.html)
-- [Configuration Reference](https://docs.micronaut.io/3.7.5/guide/configurationreference.html)
-- [Micronaut Guides](https://guides.micronaut.io/index.html)
----
+build:
+ - `./mvnw clean package  -Dpackaging=native-image -DskipTests`
+execute:
+ - `./target/bufferedimage-micronaut -Dmicronaut.env.deduction=false`
 
-## Feature http-client documentation
+call:
+ - `curl http://localhost:8080/image`
 
-- [Micronaut HTTP Client documentation](https://docs.micronaut.io/latest/guide/index.html#httpClient)
+get the stacktrace:
+
+    12:11:13.533 [default-nioEventLoopGroup-1-2] ERROR i.m.http.server.RouteExecutor - Unexpected error occurred: java.awt.image.ColorModel.pData
+    java.lang.NoSuchFieldError: java.awt.image.ColorModel.pData
+    	at com.oracle.svm.core.jni.functions.JNIFunctions$Support.getFieldID(JNIFunctions.java:1271)
+    	at com.oracle.svm.core.jni.functions.JNIFunctions.GetFieldID(JNIFunctions.java:425)
+    	at java.desktop@17.0.5/java.awt.image.ColorModel.initIDs(ColorModel.java)
+    	at java.desktop@17.0.5/java.awt.image.ColorModel.<clinit>(ColorModel.java:221)
+    	at java.desktop@17.0.5/java.awt.image.BufferedImage.<clinit>(BufferedImage.java:286)
+    	at bufferedimage.micronaut.BufferedImageController.image(BufferedImageController.java:20)
+
 
 
